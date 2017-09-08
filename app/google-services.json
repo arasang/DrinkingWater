@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "968735119861",
+    "firebase_url": "https://drinkingwater-aa610.firebaseio.com",
+    "project_id": "drinkingwater-aa610",
+    "storage_bucket": "drinkingwater-aa610.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968735119861:android:384b1c0d6e60177b",
+        "android_client_info": {
+          "package_name": "com.parksangeun.water"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "968735119861-2o8eo7em6ucl962gmp1rk5qqq1qkclkc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.parksangeun.water",
+            "certificate_hash": "7da30f3294df2645d3a86060e2aa33776d95cad2"
+          }
+        },
+        {
+          "client_id": "968735119861-5tgpr4d0slpt8islqigjvd5c04j5bhki.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG4NBDVnCbmxhzICON0PfRNiPOADrr76o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "968735119861-5tgpr4d0slpt8islqigjvd5c04j5bhki.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
