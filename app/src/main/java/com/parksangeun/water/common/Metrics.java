@@ -11,4 +11,7 @@ public class Metrics {
 
     public static final int USER_EXIST     = 10;
     public static final int USER_NOT_EXIST = 11;
+
+    /** Used AuthActivity **/
+    public static final int RC_SIGN_IN = 100;
 }
