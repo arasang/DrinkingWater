@@ -3,6 +3,7 @@ package com.parksangeun.water.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -21,14 +22,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.parksangeun.water.R;
 import com.parksangeun.water.common.CommonFunction;
 import com.parksangeun.water.common.Metrics;
+import com.parksangeun.water.common.firebase.FireAuth;
+import com.parksangeun.water.common.firebase.FireDB;
+
+import java.util.HashMap;
 
 /**
  * Created by parksangeun on 2017. 9. 8..
@@ -50,10 +52,11 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     //Google Login
     private CommonFunction function = new CommonFunction(this);
     private Context context = AuthActivity.this;
+    private Handler handler;
 
     /** Firebase **/
-    private FirebaseAuth fireAuth;
-    private FirebaseAuth.AuthStateListener fireListener;
+    private FireAuth fireAuth;
+    private FireDB fireDB = new FireDB();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +64,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_auth);
 
         initSign();
+
+        initFirebase();
 
         initView();
     }
@@ -77,14 +82,10 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        //Firebase Auth 초기화
-        fireAuth = FirebaseAuth.getInstance();
-        fireListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+    }
 
-            }
-        };
+    private void initFirebase(){
+        fireAuth = new FireAuth(this);
     }
 
     // TODO: UI 초기화 및 기능 정의
@@ -125,16 +126,16 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
             // 파이어베이스에 사용자 등록
             firebaseAuthWithGoogle(acct);
-            FirebaseDatabase fireDB = FirebaseDatabase.getInstance();
 
-            DatabaseReference ref = fireDB.getReference("member/user_email");
-            ref.setValue(acct.getEmail());
+            // FireDB 클래스를 통해 DB에 저장
+            HashMap<String,String> params = new HashMap<String,String>();
+            params.put("UserEmail", acct.getEmail());
+            params.put("UserFamily", acct.getFamilyName());
+            params.put("UserGiven", acct.getGivenName());
 
-            DatabaseReference ref2 = fireDB.getReference("member/family_name");
-            ref2.setValue(acct.getFamilyName());
+            String tableName = "User";
 
-            DatabaseReference ref3 = fireDB.getReference("member/given_name");
-            ref3.setValue(acct.getGivenName());
+            fireDB.insertStringDB(tableName, params);
 
             function.ChangeActivity(context, MainActivity.class);
             finish();
@@ -153,13 +154,13 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "firebaseWithGoogle : " + account.getIdToken());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        fireAuth.signInWithCredential(credential)
+        fireAuth.getAuth().signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "SignWithCredential is Success");
-                            FirebaseUser user = fireAuth.getCurrentUser();
+                            FirebaseUser user = fireAuth.getAuth().getCurrentUser();
                             Log.d(TAG, "Authentication user is : " + user.getDisplayName());
                         } else {
                             Log.d(TAG, "SignWithCredential is Failed");
@@ -171,12 +172,12 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-        fireAuth.addAuthStateListener(fireListener);
+        fireAuth.addFireAuth();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        fireAuth.removeAuthStateListener(fireListener);
+        fireAuth.removeFireAuth();
     }
 }

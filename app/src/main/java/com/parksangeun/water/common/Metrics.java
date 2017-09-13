@@ -5,6 +5,10 @@ package com.parksangeun.water.common;
  */
 
 public class Metrics {
+    /** Used FireAuth **/
+    public static final String AUTH_BROAD = "AUTH_BROAD";
+
+
     /** Used SplashActivity **/
     public static final int LOADING = 0;
     public static final int FINISH  = 1;
