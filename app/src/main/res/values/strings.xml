@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Water</string>
+    <string name="open_drawer">Open DrawerLayout</string>
+    <string name="close_drawer">Close DrawerLayout</string>
+    <string name="action_settings">Setting</string>
+    <string name="photo_error">"프로필 사진을 가져오지 못했습니다. 관리자에게 문의하세요"</string>
 </resources>

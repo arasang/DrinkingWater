@@ -66,6 +66,12 @@ public class FireAuth {
         return auth;
     }
 
+    public FirebaseUser getUser(){
+        FirebaseUser user = auth.getCurrentUser();
+
+        return user;
+    }
+
     public void addFireAuth(){
         auth.addAuthStateListener(listener);
     }

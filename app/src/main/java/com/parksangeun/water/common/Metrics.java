@@ -2,12 +2,11 @@ package com.parksangeun.water.common;
 
 /**
  * Created by parksangeun on 2017. 9. 8..
- */
+ **/
 
 public class Metrics {
     /** Used FireAuth **/
     public static final String AUTH_BROAD = "AUTH_BROAD";
-
 
     /** Used SplashActivity **/
     public static final int LOADING = 0;
@@ -18,4 +17,9 @@ public class Metrics {
 
     /** Used AuthActivity **/
     public static final int RC_SIGN_IN = 100;
+
+    /** Used GetPhotoTask **/
+    public static final int GET_SUCCESS = 1000;
+    public static final int GET_FAILED  = 1001;
+    public static final String BYTE_ARRAY_PHOTO = "arrayPhoto";
 }

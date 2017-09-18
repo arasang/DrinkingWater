@@ -126,19 +126,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
             // 파이어베이스에 사용자 등록
             firebaseAuthWithGoogle(acct);
-
-            // FireDB 클래스를 통해 DB에 저장
-            HashMap<String,String> params = new HashMap<String,String>();
-            params.put("UserEmail", acct.getEmail());
-            params.put("UserFamily", acct.getFamilyName());
-            params.put("UserGiven", acct.getGivenName());
-
-            String tableName = "User";
-
-            fireDB.insertStringDB(tableName, params);
-
-            function.ChangeActivity(context, MainActivity.class);
-            finish();
         } else {
             // TODO: 로그인 실패
             Toast.makeText(context, "회원 정보를 확인해 주세요.", Toast.LENGTH_SHORT).show();
@@ -150,10 +137,9 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account){
-        Log.d(TAG, "firebaseWithGoogle : " + account.getIdToken());
-
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount account){
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+
         fireAuth.getAuth().signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -162,6 +148,23 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                             Log.d(TAG, "SignWithCredential is Success");
                             FirebaseUser user = fireAuth.getAuth().getCurrentUser();
                             Log.d(TAG, "Authentication user is : " + user.getDisplayName());
+
+                            // FireDB 클래스를 통해 DB에 저장
+                            HashMap<String,String> params = new HashMap<String,String>();
+                            params.put("UserEmail", account.getEmail());
+                            params.put("UserFamily", account.getFamilyName());
+                            params.put("UserGiven", account.getGivenName());
+                            params.put("AnnualGoal", "2000");
+
+                            String uid = fireAuth.getUser().getUid();
+
+                            fireDB.insertStringDB(uid, params);
+                            /** 임시 **/
+                            fireDB.readStringDB();
+
+                            function.ChangeActivity(context, MainActivity.class);
+                            finish();
+
                         } else {
                             Log.d(TAG, "SignWithCredential is Failed");
                         }
