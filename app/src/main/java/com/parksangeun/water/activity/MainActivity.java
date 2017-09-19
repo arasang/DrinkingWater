@@ -3,7 +3,6 @@ package com.parksangeun.water.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
@@ -32,16 +31,15 @@ import com.john.waveview.WaveView;
 import com.parksangeun.water.R;
 import com.parksangeun.water.common.ConvertDate;
 import com.parksangeun.water.common.Metrics;
-import com.parksangeun.water.common.User;
+import com.parksangeun.water.common.Water;
 import com.parksangeun.water.common.firebase.FireAuth;
 import com.parksangeun.water.common.firebase.FireDB;
 import com.parksangeun.water.common.task.GetPhotoTask;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
@@ -81,6 +79,9 @@ public class MainActivity extends AppCompatActivity
 
     private Bitmap photo = null;
     private HashMap<String,String> date = new HashMap<String,String>(); // 물을 마신 시간을 저장할 변수
+
+    // 사용자가 섭취한 물을 저장할 변수
+    private HashMap<String, String> drinkedWater = new HashMap<String,String>();
 
     /** FirebaseAuth User **/
     private FireAuth fireAuth; // 공통으로 사용하는 파이어 베이스 인증 클래스
@@ -185,9 +186,26 @@ public class MainActivity extends AppCompatActivity
 
         // 로그인 사용자의 uid를 통해 정보 가져오기
 
-//        float i = 50 / Float.parseFloat(dailyGoal);
+        float ratio = 50 / Float.parseFloat(dailyGoal);
 
-//        Log.d(TAG, "Why : " + i);
+
+        drinkedWater = Water.getToday();
+
+        Iterator<String> iter = drinkedWater.keySet().iterator();
+
+        int totalToday = 0;
+
+        while (iter.hasNext()) {
+            String key = iter.next();
+            int value = Integer.parseInt(drinkedWater.get(key).toString());
+            totalToday += value;
+        }
+
+        float tt = ratio * totalToday;
+
+        Log.d(TAG, "tt : " + tt);
+
+
     }
 
     // TODO: Initiate Firebase Database

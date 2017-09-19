@@ -16,6 +16,7 @@
             android:id="@+id/waveView"
             wave:blow_wave_color="@android:color/holo_blue_bright"
             wave:above_wave_color="@android:color/holo_blue_dark"
+            wave:progress="50"
             wave:wave_length="little"
             wave:wave_height="large"
             wave:wave_hz="normal">

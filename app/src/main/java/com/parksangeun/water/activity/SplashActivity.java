@@ -17,8 +17,11 @@ import com.parksangeun.water.R;
 import com.parksangeun.water.common.CommonFunction;
 import com.parksangeun.water.common.ConvertDate;
 import com.parksangeun.water.common.Metrics;
+import com.parksangeun.water.common.Water;
 import com.parksangeun.water.common.firebase.FireAuth;
 import com.parksangeun.water.common.firebase.FireDB;
+
+import java.util.HashMap;
 
 /**
  * Created by parksangeun on 2017. 9. 8..
@@ -63,15 +66,11 @@ public class SplashActivity extends AppCompatActivity {
 
                     firedb.readDayWater(Metrics.WATER, year, month, day, uid);
 
-                    function.ChangeActivity(context, MainActivity.class);
-
                 } else if (trigger == Metrics.USER_NOT_EXIST) {
                     function.ChangeActivity(context, AuthActivity.class);
                 } else {
                     Toast.makeText(context, "비정상적 접근입니다.", Toast.LENGTH_SHORT).show();
                 }
-
-                finish();
             }
         }
     };
@@ -101,7 +100,11 @@ public class SplashActivity extends AppCompatActivity {
                     break;
 
                 case Metrics.GET_WATER_SUCCESS:
+                    Bundle bundle = msg.getData();
+
+                    Water.setToday((HashMap<String, String>) bundle.getSerializable(Metrics.WATER));
                     function.ChangeActivity(context, MainActivity.class);
+                    finish();
                     break;
             }
         }

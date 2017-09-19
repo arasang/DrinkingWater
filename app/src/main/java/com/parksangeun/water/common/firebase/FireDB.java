@@ -81,9 +81,6 @@ public class FireDB{
                         String key = "";
                         String strValue = "";
 
-                        String oldkey = "";
-                        String oldValue = "";
-
                         int i=0;
 
                         while (token.hasMoreElements()) {
@@ -104,11 +101,20 @@ public class FireDB{
 
                         Log.d(TAG, "tempHash : " + tempHash);
 
+                        Message msg = new Message();
+                        msg.what = Metrics.GET_WATER_SUCCESS;
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Metrics.WATER, tempHash);
+
+                        msg.setData(bundle);
+
+                        handler.sendMessage(msg);
+
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        handler.sendEmptyMessage(Metrics.GET_WATER_FAILED);
                     }
                 });
     }
