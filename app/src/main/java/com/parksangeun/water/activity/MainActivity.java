@@ -1,12 +1,17 @@
 package com.parksangeun.water.activity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,28 +27,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.john.waveview.WaveView;
 import com.parksangeun.water.R;
+import com.parksangeun.water.common.ConvertDate;
 import com.parksangeun.water.common.Metrics;
+import com.parksangeun.water.common.User;
 import com.parksangeun.water.common.firebase.FireAuth;
 import com.parksangeun.water.common.firebase.FireDB;
 import com.parksangeun.water.common.task.GetPhotoTask;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
@@ -55,6 +53,8 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
+    private WaveView waveView;
+
     private Button buttonDrink;
     private EditText editDrink;
 
@@ -64,14 +64,27 @@ public class MainActivity extends AppCompatActivity
 
     /** Variable **/
     private int amount = 0;
-    private String date = ""; // 물을 마신 시간을 저장할 변수
+    private String uid = "";
     private String name = "";
     private String email = "";
+    // 날짜 변수 //
+    private String year = "";
+    private String month = "";
+    private String day = "";
+    private String time = "";
+
+    // 사용자 프로필 변수 //
+    private String userFamily = "";
+    private String userGiven = "";
+    private String dailyGoal = "";
+    private String userEmail = "";
+
     private Bitmap photo = null;
+    private HashMap<String,String> date = new HashMap<String,String>(); // 물을 마신 시간을 저장할 변수
 
     /** FirebaseAuth User **/
     private FireAuth fireAuth; // 공통으로 사용하는 파이어 베이스 인증 클래스
-    private FirebaseUser user;
+    private FirebaseUser fireUser;
 
     /** FirebaseDatabase **/
     private FireDB fireDB;
@@ -92,6 +105,27 @@ public class MainActivity extends AppCompatActivity
                     photo = BitmapFactory.decodeByteArray(bytePhoto, 0, bytePhoto.length);
 
                     imagePhoto.setImageBitmap(photo);
+
+                    imagePhoto.setBackground(new ShapeDrawable(new OvalShape()));
+                    imagePhoto.setClipToOutline(true);
+
+                    break;
+
+                // TODO: 회원 정보 가져오기
+                case Metrics.GET_USER_SUCCESS:
+                    bundle = msg.getData();
+
+                    Log.d(TAG, "Handler Success");
+                    userEmail = bundle.getString("userEmail");
+                    userFamily = bundle.getString("userFamily");
+                    userGiven = bundle.getString("userGiven");
+                    dailyGoal = bundle.getString("dailyGoal");
+
+                    calcWater();
+                    break;
+
+                case Metrics.GET_USER_FAILED:
+                    Toast.makeText(MainActivity.this, "회원 정보를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -107,6 +141,7 @@ public class MainActivity extends AppCompatActivity
 
         try {
             initFire();
+
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "프로필 사진을 가져오지 못했습니다.");
@@ -123,8 +158,10 @@ public class MainActivity extends AppCompatActivity
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle
                 (this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer);
+        drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
+        waveView = (WaveView)findViewById(R.id.waveView);
 
         buttonDrink = (Button)findViewById(R.id.buttonDrink);
         editDrink = (EditText)findViewById(R.id.editDrink);
@@ -143,21 +180,34 @@ public class MainActivity extends AppCompatActivity
         buttonDrink.setOnClickListener(this);
     }
 
+    // TODO: 목표 양을 표현하기 위한 비율 계산
+    private void calcWater(){
+
+        // 로그인 사용자의 uid를 통해 정보 가져오기
+
+//        float i = 50 / Float.parseFloat(dailyGoal);
+
+//        Log.d(TAG, "Why : " + i);
+    }
+
     // TODO: Initiate Firebase Database
     private void initFire() throws IOException {
         fireAuth = new FireAuth(this);
-        fireDB = new FireDB();
+        fireDB = new FireDB(handler);
 
-        user = fireAuth.getAuth().getCurrentUser();
+        fireUser = fireAuth.getAuth().getCurrentUser();
+        uid = fireUser.getUid();
 
         getUserInfo();
     }
 
     private void getUserInfo() throws IOException {
-        name = user.getDisplayName();
-        email = user.getEmail();
+        fireDB.readUserInfo("User", uid);
 
-        Uri photoURI = user.getPhotoUrl();
+        name = fireUser.getDisplayName();
+        email = fireUser.getEmail();
+
+        Uri photoURI = fireUser.getPhotoUrl();
         URL photoURL = new URL(photoURI.toString());
 
         new GetPhotoTask(photoURL.toString(), handler).execute();
@@ -168,15 +218,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     // TODO: 현재 시간 가져오기
-    private String getTime(){
-        long longCurrent = System.currentTimeMillis();
+    public HashMap<String,String> getTime(){
 
-        Date date = new Date(longCurrent);
+        ConvertDate convertDate = new ConvertDate();
+        HashMap<String,String> currentDate = new HashMap<String, String>();
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-        String current = format.format(date);
+        year = convertDate.getCurrent(Metrics.YEAR);
+        month = convertDate.getCurrent(Metrics.MONTH);
+        day = convertDate.getCurrent(Metrics.DAY);
+        time = convertDate.getCurrent(Metrics.TIME);
+        String dayTime = convertDate.getCurrent(Metrics.DAYTIME);
 
-        return current;
+        currentDate.put("year", year);
+        currentDate.put("month", month);
+        currentDate.put("day", day);
+        currentDate.put("time", time);
+        currentDate.put("dayTime", dayTime);
+
+        return currentDate;
     }
 
     @Override
@@ -214,13 +273,11 @@ public class MainActivity extends AppCompatActivity
                     editDrink.setText("");
 
                 } else {
-                    String uid = fireAuth.getUser().getUid();
-                    String nameAmount = "amount";
+                    HashMap<String,String> param = new HashMap<String,String>();
+                    param.put(date.get("dayTime"), String.valueOf(amount));
 
-                    HashMap<String,String> params = new HashMap<>();
-                    params.put(date, String.valueOf(amount));
-
-                    fireDB.insertAmount(uid, nameAmount, params);
+                    fireDB.insertStringDB(Metrics.WATER, uid, date.get("year"),
+                            date.get("month"),date.get("day"), param);
 
                 }
             } else {
@@ -241,6 +298,21 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.navi_my:
+                Intent intent = new Intent(MainActivity.this, MyInfoActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawers();
+                break;
+        }
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
+        }
     }
 }

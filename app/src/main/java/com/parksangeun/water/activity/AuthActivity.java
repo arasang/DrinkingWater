@@ -154,13 +154,11 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                             params.put("UserEmail", account.getEmail());
                             params.put("UserFamily", account.getFamilyName());
                             params.put("UserGiven", account.getGivenName());
-                            params.put("AnnualGoal", "2000");
+                            params.put("DailyGoal", "2000");
 
                             String uid = fireAuth.getUser().getUid();
 
-                            fireDB.insertStringDB(uid, params);
-                            /** 임시 **/
-                            fireDB.readStringDB();
+                            fireDB.insertStringDB(Metrics.USER, uid, "", "", "", params);
 
                             function.ChangeActivity(context, MainActivity.class);
                             finish();

@@ -15,8 +15,10 @@ import android.widget.Toast;
 import com.john.waveview.WaveView;
 import com.parksangeun.water.R;
 import com.parksangeun.water.common.CommonFunction;
+import com.parksangeun.water.common.ConvertDate;
 import com.parksangeun.water.common.Metrics;
 import com.parksangeun.water.common.firebase.FireAuth;
+import com.parksangeun.water.common.firebase.FireDB;
 
 /**
  * Created by parksangeun on 2017. 9. 8..
@@ -31,6 +33,8 @@ public class SplashActivity extends AppCompatActivity {
 
     /** Variable **/
     private Context context = SplashActivity.this;
+    private CommonFunction function = new CommonFunction(context);
+
 
     private int load    = 50;
     private int delay   = 100;
@@ -46,10 +50,20 @@ public class SplashActivity extends AppCompatActivity {
             if (Metrics.AUTH_BROAD.equals(intent.getAction())) {
                 trigger = intent.getIntExtra("trigger", 0);
 
-                CommonFunction function = new CommonFunction(context);
-
                 if (trigger == Metrics.USER_EXIST) {
+                    FireDB firedb = new FireDB(handler);
+                    String uid = fireAuth.getUser().getUid();
+
+                    ConvertDate convertDate = new ConvertDate();
+                    String year = convertDate.getCurrent(Metrics.YEAR);
+                    String month = convertDate.getCurrent(Metrics.MONTH);
+                    String day = convertDate.getCurrent(Metrics.DAY);
+                    String time = convertDate.getCurrent(Metrics.TIME);
+
+                    firedb.readDayWater(Metrics.WATER, year, month, day, uid);
+
                     function.ChangeActivity(context, MainActivity.class);
+
                 } else if (trigger == Metrics.USER_NOT_EXIST) {
                     function.ChangeActivity(context, AuthActivity.class);
                 } else {
@@ -84,6 +98,10 @@ public class SplashActivity extends AppCompatActivity {
                 case Metrics.FINISH:
                     // TODO: Nothing
                     break;
+
+                case Metrics.GET_WATER_SUCCESS:
+                    function.ChangeActivity(context, MainActivity.class);
+                    break;
             }
         }
     };
@@ -92,8 +110,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-        initBroadCast();
 
         initView();
 
@@ -119,6 +135,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         fireAuth.addFireAuth();
+        initBroadCast();
     }
 
     @Override

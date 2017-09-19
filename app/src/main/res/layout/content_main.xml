@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:wave="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
         android:id="@+id/activity_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
+        android:layout_height="match_parent">
 
+        <com.john.waveview.WaveView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/waveView"
+            wave:blow_wave_color="@android:color/holo_blue_bright"
+            wave:above_wave_color="@android:color/holo_blue_dark"
+            wave:wave_length="little"
+            wave:wave_height="large"
+            wave:wave_hz="normal">
+
+        </com.john.waveview.WaveView>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/back_white_water"
+            android:scaleType="fitXY"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -18,7 +34,8 @@
             android:maxLines="1"
             android:maxLength="4"
             android:inputType="number"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:layout_marginTop="@dimen/main_edit_top_margin"/>
 
         <Button
             android:layout_width="wrap_content"
