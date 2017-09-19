@@ -25,6 +25,8 @@ public class FireAuth {
 
     private int trigger = -1;
 
+    private int flag = 0;
+
     public FireAuth(Context context){
         this.context = context;
         initFire();
@@ -43,13 +45,20 @@ public class FireAuth {
 
                     Log.d(TAG, "User already exists.");
                     trigger = Metrics.USER_EXIST;
-                    sendBroad(trigger);
+
+                    if (flag == 0) {
+                        flag = 1;
+                        sendBroad(trigger);
+                    }
                 } else {
                     //TODO: Need login
 
                     Log.d(TAG, "You need to log in.");
                     trigger = Metrics.USER_NOT_EXIST;
-                    sendBroad(trigger);
+                    if (flag == 0) {
+                        flag = 1;
+                        sendBroad(trigger);
+                    }
                 }
             }
         };

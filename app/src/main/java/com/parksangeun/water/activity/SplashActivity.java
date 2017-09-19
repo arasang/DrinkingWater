@@ -51,6 +51,7 @@ public class SplashActivity extends AppCompatActivity {
                 trigger = intent.getIntExtra("trigger", 0);
 
                 if (trigger == Metrics.USER_EXIST) {
+                    Log.d(TAG, "Broad");
                     FireDB firedb = new FireDB(handler);
                     String uid = fireAuth.getUser().getUid();
 

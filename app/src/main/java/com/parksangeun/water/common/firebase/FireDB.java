@@ -17,6 +17,7 @@ import com.parksangeun.water.common.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -65,27 +66,51 @@ public class FireDB{
     public void readDayWater(String title, String year, String month, String day, String uid){
         ref.child(title).child(uid).child(year).child(month).child(day).
                 addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "snap : " +dataSnapshot.getValue());
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String data = dataSnapshot.getValue().toString();
 
-                String data = dataSnapshot.getValue().toString();
+                        data = data.replace("{", "");
+                        data = data.replace("}", "");
+                        data = data.replace(" ", "");
 
-                data = data.replace("{", "");
-                data = data.replace("}", "");
+                        StringTokenizer token = new StringTokenizer(data, ",");
 
-                StringTokenizer token = new StringTokenizer(data, ",");
+                        HashMap<String,String> tempHash = new HashMap<String, String>();
 
-                while (token.hasMoreElements()) {
-                    Log.d(TAG, "token : " + token.nextElement());
-                }
-            }
+                        String key = "";
+                        String strValue = "";
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                        String oldkey = "";
+                        String oldValue = "";
 
-            }
-        });
+                        int i=0;
+
+                        while (token.hasMoreElements()) {
+                            String value = token.nextToken().toString();
+                            StringTokenizer tokenizer = new StringTokenizer(value, "=");
+
+                            while (tokenizer.hasMoreElements()) {
+                                if (i % 2 == 0) {
+                                    key = tokenizer.nextToken().toString();
+                                } else {
+                                    strValue = tokenizer.nextToken().toString();
+
+                                    tempHash.put(key, strValue);
+                                }
+                                i++;
+                            }
+                        }
+
+                        Log.d(TAG, "tempHash : " + tempHash);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     public void readUserInfo(String title, final String uid){
