@@ -10,8 +10,7 @@ public class Metrics {
 
     /** Used FireDB **/
     public static final String WATER = "Water";
-    public static final int GET_USER_SUCCESS = 0;
-    public static final int GET_USER_FAILED  = 1;
+    public static final String ACTION_READ_WATER = "READ_WATER";
 
     /** Used SplashActivity **/
     public static final int LOADING = 2;
@@ -22,6 +21,7 @@ public class Metrics {
 
     public static final int GET_WATER_SUCCESS = 12;
     public static final int GET_WATER_FAILED  = 13;
+    public static final int GET_WATER_NULL    = 14;
 
     /** Used AuthActivity **/
     public static final int RC_SIGN_IN = 100;
@@ -39,4 +39,13 @@ public class Metrics {
     public static final int TIME = 1013;
     public static final int DAYTIME = 1014;
     public static final int ALL = 1015;
+
+    /** Used MainActivity **/
+    public static final int START_ANIMATION = 2000;
+    public static final int STOP_ANIMATION  = 2001;
+
+    public static final String BROAD_GET_USER_SUCCESS  = "GET_USER_SUCCESS";
+    public static final String BROAD_GET_USER_FAILED   = "GET_USER_FAILED";
+    public static final String BROAD_GET_WATER_SUCCESS = "GET_WATER_SUCCESS";
+    public static final String BROAD_GET_WATER_FAILED  = "GET_WATER_FAILED";
 }

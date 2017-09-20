@@ -27,6 +27,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.parksangeun.water.R;
 import com.parksangeun.water.common.CommonFunction;
 import com.parksangeun.water.common.Metrics;
+import com.parksangeun.water.common.UserData;
 import com.parksangeun.water.common.firebase.FireAuth;
 import com.parksangeun.water.common.firebase.FireDB;
 
@@ -145,10 +146,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "SignWithCredential is Success");
-                            FirebaseUser user = fireAuth.getAuth().getCurrentUser();
-                            Log.d(TAG, "Authentication user is : " + user.getDisplayName());
-
                             // FireDB 클래스를 통해 DB에 저장
                             HashMap<String,String> params = new HashMap<String,String>();
                             params.put("UserEmail", account.getEmail());
@@ -159,6 +156,13 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                             String uid = fireAuth.getUser().getUid();
 
                             fireDB.insertStringDB(Metrics.USER, uid, "", "", "", params);
+
+                            UserData.setUserEmail(account.getEmail());
+                            UserData.setDisplayName(account.getDisplayName());
+                            UserData.setUserPhoto(account.getPhotoUrl());
+                            UserData.setUid(uid);
+                            UserData.setDailyGoal("2000");
+
 
                             function.ChangeActivity(context, MainActivity.class);
                             finish();

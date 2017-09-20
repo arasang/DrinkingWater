@@ -17,11 +17,9 @@ import com.parksangeun.water.R;
 import com.parksangeun.water.common.CommonFunction;
 import com.parksangeun.water.common.ConvertDate;
 import com.parksangeun.water.common.Metrics;
-import com.parksangeun.water.common.Water;
+import com.parksangeun.water.common.UserData;
 import com.parksangeun.water.common.firebase.FireAuth;
 import com.parksangeun.water.common.firebase.FireDB;
-
-import java.util.HashMap;
 
 /**
  * Created by parksangeun on 2017. 9. 8..
@@ -45,6 +43,7 @@ public class SplashActivity extends AppCompatActivity {
 
     /** Firebase Setting **/
     private FireAuth fireAuth;
+    private FireDB firedb;
 
     /** BroadCast **/
     private BroadcastReceiver broadReceiver = new BroadcastReceiver() {
@@ -53,16 +52,17 @@ public class SplashActivity extends AppCompatActivity {
             if (Metrics.AUTH_BROAD.equals(intent.getAction())) {
                 trigger = intent.getIntExtra("trigger", 0);
 
+
+                /** 유저가 존재함 **/
                 if (trigger == Metrics.USER_EXIST) {
-                    Log.d(TAG, "Broad");
-                    FireDB firedb = new FireDB(handler);
-                    String uid = fireAuth.getUser().getUid();
+                    // TODO: 사용자 정보 UserData에 저장
+
+                    String uid = UserData.getUid();
 
                     ConvertDate convertDate = new ConvertDate();
                     String year = convertDate.getCurrent(Metrics.YEAR);
                     String month = convertDate.getCurrent(Metrics.MONTH);
                     String day = convertDate.getCurrent(Metrics.DAY);
-                    String time = convertDate.getCurrent(Metrics.TIME);
 
                     firedb.readDayWater(Metrics.WATER, year, month, day, uid);
 
@@ -71,6 +71,11 @@ public class SplashActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(context, "비정상적 접근입니다.", Toast.LENGTH_SHORT).show();
                 }
+            }
+
+            if (Metrics.ACTION_READ_WATER.equals(intent.getAction())) {
+                function.ChangeActivity(context, MainActivity.class);
+                finish();
             }
         }
     };
@@ -99,10 +104,7 @@ public class SplashActivity extends AppCompatActivity {
                     // TODO: Nothing
                     break;
 
-                case Metrics.GET_WATER_SUCCESS:
-                    Bundle bundle = msg.getData();
-
-                    Water.setToday((HashMap<String, String>) bundle.getSerializable(Metrics.WATER));
+                case Metrics.GET_WATER_NULL:
                     function.ChangeActivity(context, MainActivity.class);
                     finish();
                     break;
@@ -122,7 +124,11 @@ public class SplashActivity extends AppCompatActivity {
 
     private void initBroadCast(){
         IntentFilter filter = new IntentFilter(Metrics.AUTH_BROAD);
+        IntentFilter filter2 = new IntentFilter(Metrics.ACTION_READ_WATER);
+
         registerReceiver(broadReceiver,filter);
+
+        registerReceiver(broadReceiver,filter2);
     }
 
     private void initView(){
@@ -132,6 +138,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void initFirebase(){
+        firedb = new FireDB(context);
         fireAuth = new FireAuth(context);
     }
 

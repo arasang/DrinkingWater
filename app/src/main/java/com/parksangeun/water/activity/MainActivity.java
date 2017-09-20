@@ -1,6 +1,9 @@
 package com.parksangeun.water.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ShapeDrawable;
@@ -26,13 +29,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.john.waveview.WaveView;
 import com.parksangeun.water.R;
 import com.parksangeun.water.common.ConvertDate;
 import com.parksangeun.water.common.Metrics;
-import com.parksangeun.water.common.Water;
-import com.parksangeun.water.common.firebase.FireAuth;
+import com.parksangeun.water.common.UserData;
+import com.parksangeun.water.common.WaterData;
 import com.parksangeun.water.common.firebase.FireDB;
 import com.parksangeun.water.common.task.GetPhotoTask;
 
@@ -77,15 +79,19 @@ public class MainActivity extends AppCompatActivity
     private String dailyGoal = "";
     private String userEmail = "";
 
+    // 물 애니메이션에 사용할 변수
+    private int originProgress = 60;
+    private int todayProgress = 0;
+    private int progress = 0;
+    private int gap = 30;
+
+
     private Bitmap photo = null;
     private HashMap<String,String> date = new HashMap<String,String>(); // 물을 마신 시간을 저장할 변수
 
     // 사용자가 섭취한 물을 저장할 변수
-    private HashMap<String, String> drinkedWater = new HashMap<String,String>();
-
-    /** FirebaseAuth User **/
-    private FireAuth fireAuth; // 공통으로 사용하는 파이어 베이스 인증 클래스
-    private FirebaseUser fireUser;
+    private HashMap<String, String> hashToday = new HashMap<String,String>();
+    private int totalToday = 0;
 
     /** FirebaseDatabase **/
     private FireDB fireDB;
@@ -112,21 +118,24 @@ public class MainActivity extends AppCompatActivity
 
                     break;
 
-                // TODO: 회원 정보 가져오기
-                case Metrics.GET_USER_SUCCESS:
-                    bundle = msg.getData();
-
-                    Log.d(TAG, "Handler Success");
-                    userEmail = bundle.getString("userEmail");
-                    userFamily = bundle.getString("userFamily");
-                    userGiven = bundle.getString("userGiven");
-                    dailyGoal = bundle.getString("dailyGoal");
-
-                    calcWater();
+                case Metrics.GET_WATER_NULL:
+                    Log.i(TAG, "하루 누적 데이터가 없음");
                     break;
 
-                case Metrics.GET_USER_FAILED:
-                    Toast.makeText(MainActivity.this, "회원 정보를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                case Metrics.START_ANIMATION:
+                    // TODO: 애니메이션 스타트
+                    progress ++ ;
+                    waveView.setProgress(progress);
+                    if(progress >= originProgress + todayProgress) {
+                        handler.sendEmptyMessage(Metrics.STOP_ANIMATION);
+                    } else {
+                        handler.sendEmptyMessage(Metrics.START_ANIMATION);
+                    }
+                    break;
+
+                case Metrics.STOP_ANIMATION:
+                    // TODO: 애니메이션 종료
+                    Log.d(TAG, "progress : " + progress);
                     break;
             }
         }
@@ -137,12 +146,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        initView();
-
         try {
-            initFire();
-
+            initView();
+            getUserInfo();
+            getCurrentWater();
+            fireDB = new FireDB(this);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "프로필 사진을 가져오지 못했습니다.");
@@ -181,52 +189,48 @@ public class MainActivity extends AppCompatActivity
         buttonDrink.setOnClickListener(this);
     }
 
+    private void getCurrentWater(){
+        hashToday = WaterData.getToday();
+
+        Log.d(TAG, "hashToday : " + hashToday);
+
+        calcWater(dailyGoal);
+    }
+
     // TODO: 목표 양을 표현하기 위한 비율 계산
-    private void calcWater(){
+    private void calcWater(String dailyGoal){
 
-        // 로그인 사용자의 uid를 통해 정보 가져오기
+        float ratio = gap / Float.parseFloat(dailyGoal);
 
-        float ratio = 50 / Float.parseFloat(dailyGoal);
+        progress = originProgress;
+        hashToday = WaterData.getToday();
 
-
-        drinkedWater = Water.getToday();
-
-        Iterator<String> iter = drinkedWater.keySet().iterator();
-
-        int totalToday = 0;
-
-        while (iter.hasNext()) {
-            String key = iter.next();
-            int value = Integer.parseInt(drinkedWater.get(key).toString());
+        Iterator<String> i = hashToday.keySet().iterator();
+        totalToday = 0;
+        while (i.hasNext()) {
+            String key = i.next();
+            int value = Integer.parseInt(hashToday.get(key).toString());
             totalToday += value;
         }
 
-        float tt = ratio * totalToday;
-
-        Log.d(TAG, "tt : " + tt);
+        todayProgress = (int)(ratio * totalToday);
 
 
+        handler.sendEmptyMessage(Metrics.START_ANIMATION);
     }
 
     // TODO: Initiate Firebase Database
-    private void initFire() throws IOException {
-        fireAuth = new FireAuth(this);
-        fireDB = new FireDB(handler);
 
-        fireUser = fireAuth.getAuth().getCurrentUser();
-        uid = fireUser.getUid();
-
-        getUserInfo();
-    }
 
     private void getUserInfo() throws IOException {
-        fireDB.readUserInfo("User", uid);
 
-        name = fireUser.getDisplayName();
-        email = fireUser.getEmail();
+        uid = UserData.getUid();
+        name = UserData.getDisplayName();
+        email = UserData.getUserEmail();
+        Uri url = UserData.getUserPhoto();
+        dailyGoal = UserData.getDailyGoal();
 
-        Uri photoURI = fireUser.getPhotoUrl();
-        URL photoURL = new URL(photoURI.toString());
+        URL photoURL = new URL(url.toString());
 
         new GetPhotoTask(photoURL.toString(), handler).execute();
 
@@ -258,19 +262,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }

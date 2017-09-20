@@ -1,11 +1,13 @@
 package com.parksangeun.water.common.firebase;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,11 +15,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.parksangeun.water.common.Metrics;
 import com.parksangeun.water.common.User;
+import com.parksangeun.water.common.WaterData;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -32,14 +31,16 @@ public class FireDB{
     private FirebaseDatabase db;
     private DatabaseReference ref;
     private Handler handler;
+    private Context context = null;
 
     public FireDB(){
         db = FirebaseDatabase.getInstance();
         ref = db.getReference();
     }
 
-    public FireDB(Handler handler){
-        this.handler = handler;
+    public FireDB(Context context){
+        Log.d(TAG, "Created by Context");
+        this.context = context;
 
         db = FirebaseDatabase.getInstance();
         ref = db.getReference();
@@ -68,47 +69,78 @@ public class FireDB{
                 addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String data = dataSnapshot.getValue().toString();
+                        if (dataSnapshot.getValue() != null) {
+                            String data = dataSnapshot.getValue().toString();
 
-                        data = data.replace("{", "");
-                        data = data.replace("}", "");
-                        data = data.replace(" ", "");
+                            data = data.replace("{", "");
+                            data = data.replace("}", "");
+                            data = data.replace(" ", "");
 
-                        StringTokenizer token = new StringTokenizer(data, ",");
+                            StringTokenizer token = new StringTokenizer(data, ",");
 
-                        HashMap<String,String> tempHash = new HashMap<String, String>();
+                            HashMap<String,String> tempHash = new HashMap<String, String>();
 
-                        String key = "";
-                        String strValue = "";
+                            String key = "";
+                            String strValue = "";
 
-                        int i=0;
+                            int i=0;
 
-                        while (token.hasMoreElements()) {
-                            String value = token.nextToken().toString();
-                            StringTokenizer tokenizer = new StringTokenizer(value, "=");
+                            while (token.hasMoreElements()) {
+                                String value = token.nextToken().toString();
+                                StringTokenizer tokenizer = new StringTokenizer(value, "=");
 
-                            while (tokenizer.hasMoreElements()) {
-                                if (i % 2 == 0) {
-                                    key = tokenizer.nextToken().toString();
-                                } else {
-                                    strValue = tokenizer.nextToken().toString();
+                                while (tokenizer.hasMoreElements()) {
+                                    if (i % 2 == 0) {
+                                        key = tokenizer.nextToken().toString();
+                                    } else {
+                                        strValue = tokenizer.nextToken().toString();
 
-                                    tempHash.put(key, strValue);
+                                        tempHash.put(key, strValue);
+                                    }
+                                    i++;
                                 }
-                                i++;
                             }
+
+                            Log.d(TAG, "tempHash : " + tempHash);
+
+                            WaterData.setToday(tempHash);
+
+                            Intent intent = new Intent(Metrics.ACTION_READ_WATER);
+                            context.sendBroadcast(intent);
+
+//                            if (context != null) {
+//                                // TODO: MainActivity로 데이터 전송 - BroadCast
+//                                Intent intent = new Intent(Metrics.BROAD_GET_WATER_SUCCESS);
+//                                intent.putExtra(Metrics.WATER, tempHash);
+//                                context.sendBroadcast(intent);
+//                            } else {
+//                                // TODO: SplashActivity로 데이터 전송 - Handler
+//                                Message msg = new Message();
+//                                msg.what = Metrics.GET_WATER_SUCCESS;
+//                                Bundle bundle = new Bundle();
+//                                bundle.putSerializable(Metrics.WATER, tempHash);
+//
+//                                msg.setData(bundle);
+//
+//                                handler.sendMessage(msg);
+//                            }
+//                        } else {
+//                            // Value에 아무 값도 없을 경우.
+//
+//                            if (context != null) {
+//                                // TODO: MainActivity로 데이터 전송 - BroadCast
+//                                Intent intent = new Intent(Metrics.BROAD_GET_WATER_FAILED);
+//                                context.sendBroadcast(intent);
+//                            } else  {
+//                                // TODO: SplashActivity로 데이터 전송 - Handler
+//                                handler.sendEmptyMessage(Metrics.GET_WATER_NULL);
+//                            }
+
+                        } else {
+                            //TEMP
+                            Intent intent = new Intent(Metrics.ACTION_READ_WATER);
+                            context.sendBroadcast(intent);
                         }
-
-                        Log.d(TAG, "tempHash : " + tempHash);
-
-                        Message msg = new Message();
-                        msg.what = Metrics.GET_WATER_SUCCESS;
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Metrics.WATER, tempHash);
-
-                        msg.setData(bundle);
-
-                        handler.sendMessage(msg);
 
                     }
 
@@ -119,8 +151,43 @@ public class FireDB{
                 });
     }
 
-    public void readUserInfo(String title, final String uid){
+    public void readUserInfo(String uid, final Handler handler){
+        Log.d(TAG, "이거 호출");
+        final HashMap<String,String> result = new HashMap<String,String>();
+        ref.child(Metrics.USER).child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
 
+                String userEmail = user.getUserEmail();
+                String userFamily = user.getUserFamily();
+                String userGiven = user.getUserGiven();
+                String dailyGoal = user.getDailyGoal();
+
+                result.put("userEmail", userEmail);
+                result.put("userFamily", userFamily);
+                result.put("userGiven", userGiven);
+                result.put("dailyGoal", dailyGoal);
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("UserInfo", result);
+
+                Message msg = new Message();
+                msg.what = 0;
+                msg.setData(bundle);
+
+                handler.sendMessage(msg);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void readUserInfo(String title, final String uid){
         ref.child(title).child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -132,26 +199,21 @@ public class FireDB{
                 String userGiven = user.getUserGiven();
                 String dailyGoal = user.getDailyGoal();
 
-                Message msg = new Message();
-                msg.what = Metrics.GET_USER_SUCCESS;
+                Intent intent = new Intent(Metrics.BROAD_GET_USER_SUCCESS);
+                intent.putExtra("userEmail", userEmail);
+                intent.putExtra("userFamily", userFamily);
+                intent.putExtra("userGiven", userGiven);
+                intent.putExtra("dailyGoal", dailyGoal);
 
-                Bundle bundle = new Bundle();
-                bundle.putString("userEmail", userEmail);
-                bundle.putString("userFamily", userFamily);
-                bundle.putString("userGiven", userGiven);
-                bundle.putString("dailyGoal", dailyGoal);
-
-                msg.setData(bundle);
-
-                handler.sendMessage(msg);
-
+                if(context != null)
+                    context.sendBroadcast(intent);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // TODO: 로딩이 중단됐을 경우 호출
-
-                handler.sendEmptyMessage(Metrics.GET_USER_FAILED);
+                Intent intent = new Intent(Metrics.BROAD_GET_USER_FAILED);
+                context.sendBroadcast(intent);
             }
         });
     }
