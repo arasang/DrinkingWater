@@ -1,33 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:wave="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <com.john.waveview.WaveView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/waveView"
+        wave:blow_wave_color="@android:color/holo_blue_bright"
+        wave:above_wave_color="@android:color/holo_blue_dark"
+        wave:progress="60"
+        wave:wave_length="little"
+        wave:wave_height="large"
+        wave:wave_hz="normal">
+
+    </com.john.waveview.WaveView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/back_white_water"
+        android:scaleType="fitXY"/>
+
     <RelativeLayout
-        android:id="@+id/activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <com.john.waveview.WaveView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/waveView"
-            wave:blow_wave_color="@android:color/holo_blue_bright"
-            wave:above_wave_color="@android:color/holo_blue_dark"
-            wave:progress="60"
-            wave:wave_length="little"
-            wave:wave_height="large"
-            wave:wave_hz="normal">
+            android:layout_height="wrap_content"
+            android:id="@+id/linear1"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="목표"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textGoal"
+                android:layout_weight="1"/>
 
-        </com.john.waveview.WaveView>
-
-        <ImageView
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/back_white_water"
-            android:scaleType="fitXY"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/linear2"
+            android:orientation="horizontal"
+            android:layout_below="@id/linear1">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="오늘 하루"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textCurrent"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,13 +75,14 @@
             android:maxLength="4"
             android:inputType="number"
             android:imeOptions="actionDone"
-            android:layout_marginTop="@dimen/main_edit_top_margin"/>
+            android:layout_marginTop="@dimen/main_edit_top_margin"
+            android:layout_below="@id/linear2"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/buttonDrink"
-            android:layout_centerInParent="true"/>
-
+            android:layout_centerInParent="true"
+            android:layout_below="@id/editDrink"/>
     </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

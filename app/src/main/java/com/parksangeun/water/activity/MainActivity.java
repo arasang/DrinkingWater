@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity
     private TextView textName;
     private TextView textEmail;
 
+    private TextView textGoal;
+    private TextView textCurrent;
+
     /** Variable **/
     private int amount = 0;
     private String uid = "";
@@ -74,13 +77,10 @@ public class MainActivity extends AppCompatActivity
     private String time = "";
 
     // 사용자 프로필 변수 //
-    private String userFamily = "";
-    private String userGiven = "";
     private String dailyGoal = "";
-    private String userEmail = "";
 
     // 물 애니메이션에 사용할 변수
-    private int originProgress = 60;
+    private int originProgress = 64;
     private int todayProgress = 0;
     private int progress = 0;
     private int gap = 30;
@@ -151,6 +151,10 @@ public class MainActivity extends AppCompatActivity
             getUserInfo();
             getCurrentWater();
             fireDB = new FireDB(this);
+
+            textGoal.setText(dailyGoal + "mL");
+            textCurrent.setText(WaterData.getTotalToday());
+
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "프로필 사진을 가져오지 못했습니다.");
@@ -185,14 +189,14 @@ public class MainActivity extends AppCompatActivity
         imagePhoto = (ImageView)header.findViewById(R.id.imagePhoto);
         textName = (TextView)header.findViewById(R.id.textName);
         textEmail = (TextView)header.findViewById(R.id.textEmail);
+        textGoal = (TextView) findViewById(R.id.textGoal);
+        textCurrent = (TextView) findViewById(R.id.textCurrent);
 
         buttonDrink.setOnClickListener(this);
     }
 
     private void getCurrentWater(){
         hashToday = WaterData.getToday();
-
-        Log.d(TAG, "hashToday : " + hashToday);
 
         calcWater(dailyGoal);
     }
@@ -223,7 +227,6 @@ public class MainActivity extends AppCompatActivity
 
 
     private void getUserInfo() throws IOException {
-
         uid = UserData.getUid();
         name = UserData.getDisplayName();
         email = UserData.getUserEmail();
@@ -306,11 +309,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        IntentFilter filter = new IntentFilter(Metrics.ACTION_READ_WATER);
+        registerReceiver(receiver, filter);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        unregisterReceiver(receiver);
     }
 
     @Override
@@ -332,4 +338,14 @@ public class MainActivity extends AppCompatActivity
             drawerLayout.closeDrawers();
         }
     }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Metrics.ACTION_READ_WATER.equals(intent.getAction())) {
+                hashToday = WaterData.getToday();
+                calcWater(dailyGoal);
+            }
+        }
+    };
 }

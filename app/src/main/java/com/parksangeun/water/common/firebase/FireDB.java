@@ -101,8 +101,6 @@ public class FireDB{
                                 }
                             }
 
-                            Log.d(TAG, "tempHash : " + tempHash);
-
                             WaterData.setToday(tempHash);
 
                             Intent intent = new Intent(Metrics.ACTION_READ_WATER);
@@ -137,7 +135,6 @@ public class FireDB{
 //                            }
 
                         } else {
-                            //TEMP
                             Intent intent = new Intent(Metrics.ACTION_READ_WATER);
                             context.sendBroadcast(intent);
                         }
