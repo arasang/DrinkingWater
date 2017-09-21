@@ -106,34 +106,6 @@ public class FireDB{
                             Intent intent = new Intent(Metrics.ACTION_READ_WATER);
                             context.sendBroadcast(intent);
 
-//                            if (context != null) {
-//                                // TODO: MainActivity로 데이터 전송 - BroadCast
-//                                Intent intent = new Intent(Metrics.BROAD_GET_WATER_SUCCESS);
-//                                intent.putExtra(Metrics.WATER, tempHash);
-//                                context.sendBroadcast(intent);
-//                            } else {
-//                                // TODO: SplashActivity로 데이터 전송 - Handler
-//                                Message msg = new Message();
-//                                msg.what = Metrics.GET_WATER_SUCCESS;
-//                                Bundle bundle = new Bundle();
-//                                bundle.putSerializable(Metrics.WATER, tempHash);
-//
-//                                msg.setData(bundle);
-//
-//                                handler.sendMessage(msg);
-//                            }
-//                        } else {
-//                            // Value에 아무 값도 없을 경우.
-//
-//                            if (context != null) {
-//                                // TODO: MainActivity로 데이터 전송 - BroadCast
-//                                Intent intent = new Intent(Metrics.BROAD_GET_WATER_FAILED);
-//                                context.sendBroadcast(intent);
-//                            } else  {
-//                                // TODO: SplashActivity로 데이터 전송 - Handler
-//                                handler.sendEmptyMessage(Metrics.GET_WATER_NULL);
-//                            }
-
                         } else {
                             Intent intent = new Intent(Metrics.ACTION_READ_WATER);
                             context.sendBroadcast(intent);
@@ -149,7 +121,6 @@ public class FireDB{
     }
 
     public void readUserInfo(String uid, final Handler handler){
-        Log.d(TAG, "이거 호출");
         final HashMap<String,String> result = new HashMap<String,String>();
         ref.child(Metrics.USER).child(uid).addValueEventListener(new ValueEventListener() {
             @Override
@@ -182,36 +153,5 @@ public class FireDB{
             }
         });
 
-    }
-
-    public void readUserInfo(String title, final String uid){
-        ref.child(title).child(uid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // TODO: 지속적으로 호출
-                User user = dataSnapshot.getValue(User.class);
-
-                String userEmail = user.getUserEmail();
-                String userFamily = user.getUserFamily();
-                String userGiven = user.getUserGiven();
-                String dailyGoal = user.getDailyGoal();
-
-                Intent intent = new Intent(Metrics.BROAD_GET_USER_SUCCESS);
-                intent.putExtra("userEmail", userEmail);
-                intent.putExtra("userFamily", userFamily);
-                intent.putExtra("userGiven", userGiven);
-                intent.putExtra("dailyGoal", dailyGoal);
-
-                if(context != null)
-                    context.sendBroadcast(intent);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // TODO: 로딩이 중단됐을 경우 호출
-                Intent intent = new Intent(Metrics.BROAD_GET_USER_FAILED);
-                context.sendBroadcast(intent);
-            }
-        });
     }
 }

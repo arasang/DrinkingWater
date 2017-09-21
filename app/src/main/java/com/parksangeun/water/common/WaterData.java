@@ -1,5 +1,7 @@
 package com.parksangeun.water.common;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -8,6 +10,7 @@ import java.util.Iterator;
  */
 
 public class WaterData {
+    private static final String TAG = "WaterData";
     private static HashMap<String,String> today = new HashMap<String,String>();
 
     public static void setToday(HashMap<String, String> today) {
@@ -15,6 +18,7 @@ public class WaterData {
     }
 
     public static HashMap<String, String> getToday() {
+        Log.d(TAG, "getToday : " + today);
         return today;
     }
 

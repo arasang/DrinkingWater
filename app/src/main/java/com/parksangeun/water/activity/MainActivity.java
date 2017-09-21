@@ -35,6 +35,7 @@ import com.parksangeun.water.common.ConvertDate;
 import com.parksangeun.water.common.Metrics;
 import com.parksangeun.water.common.UserData;
 import com.parksangeun.water.common.WaterData;
+import com.parksangeun.water.common.dialog.MainAlertDialog;
 import com.parksangeun.water.common.firebase.FireDB;
 import com.parksangeun.water.common.task.GetPhotoTask;
 
@@ -84,12 +85,10 @@ public class MainActivity extends AppCompatActivity
     private int todayProgress = 0;
     private int progress = 0;
     private int gap = 30;
-
-
     private Bitmap photo = null;
-    private HashMap<String,String> date = new HashMap<String,String>(); // 물을 마신 시간을 저장할 변수
 
     // 사용자가 섭취한 물을 저장할 변수
+    private HashMap<String,String> date = new HashMap<String,String>(); // 물을 마신 시간을 저장할 변수
     private HashMap<String, String> hashToday = new HashMap<String,String>();
     private int totalToday = 0;
 
@@ -197,7 +196,6 @@ public class MainActivity extends AppCompatActivity
 
     private void getCurrentWater(){
         hashToday = WaterData.getToday();
-
         calcWater(dailyGoal);
     }
 
@@ -207,7 +205,6 @@ public class MainActivity extends AppCompatActivity
         float ratio = gap / Float.parseFloat(dailyGoal);
 
         progress = originProgress;
-        hashToday = WaterData.getToday();
 
         Iterator<String> i = hashToday.keySet().iterator();
         totalToday = 0;
@@ -293,11 +290,15 @@ public class MainActivity extends AppCompatActivity
                     editDrink.setText("");
 
                 } else {
+
+                    MainAlertDialog dialog = new MainAlertDialog(MainActivity.this);
+                    dialog.show();
+
                     HashMap<String,String> param = new HashMap<String,String>();
-                    param.put(date.get("dayTime"), String.valueOf(amount));
+                    param.put(date.get("time"), String.valueOf(amount));
 
                     fireDB.insertStringDB(Metrics.WATER, uid, date.get("year"),
-                            date.get("month"),date.get("day"), param);
+                            date.get("month"), date.get("day"), param);
 
                 }
             } else {
@@ -345,6 +346,8 @@ public class MainActivity extends AppCompatActivity
             if (Metrics.ACTION_READ_WATER.equals(intent.getAction())) {
                 hashToday = WaterData.getToday();
                 calcWater(dailyGoal);
+
+                textCurrent.setText(WaterData.getTotalToday() + "mL");
             }
         }
     };
