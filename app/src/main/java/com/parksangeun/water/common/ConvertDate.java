@@ -1,9 +1,10 @@
 package com.parksangeun.water.common;
 
 
+import com.parksangeun.water.common.data.Metrics;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * Created by parksangeun on 2017. 9. 19..

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/container">
+
+    <ImageView
+        android:layout_width="@dimen/img_profile"
+        android:layout_height="@dimen/img_profile"
+        android:id="@+id/imageProfile"
+        android:layout_gravity="center"/>
+
+    <include
+        layout="@layout/content_name"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:background="@color/lineColor"
+        android:layout_marginTop="@dimen/my_name_margin_bottom"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/my_name_margin_bottom"
+        android:paddingBottom="@dimen/my_name_margin_bottom">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="이메일"
+            android:textSize="15sp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textEmail"
+            android:textSize="12sp"
+            android:text="testValue@test.com"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="17dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:background="@color/lineColor2"></LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonGoal"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/my_name_margin_bottom"
+        android:paddingBottom="@dimen/my_name_margin_bottom">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="하루 목표"
+            android:textSize="15sp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textGoal"
+            android:textSize="12sp"
+            android:text="2L"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="17dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:background="@color/lineColor"></LinearLayout>
+</LinearLayout>

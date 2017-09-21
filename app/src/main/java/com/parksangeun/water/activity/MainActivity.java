@@ -31,10 +31,11 @@ import android.widget.Toast;
 
 import com.john.waveview.WaveView;
 import com.parksangeun.water.R;
+import com.parksangeun.water.common.CommonFunction;
 import com.parksangeun.water.common.ConvertDate;
-import com.parksangeun.water.common.Metrics;
-import com.parksangeun.water.common.UserData;
-import com.parksangeun.water.common.WaterData;
+import com.parksangeun.water.common.data.Metrics;
+import com.parksangeun.water.common.data.UserData;
+import com.parksangeun.water.common.data.WaterData;
 import com.parksangeun.water.common.dialog.MainAlertDialog;
 import com.parksangeun.water.common.firebase.FireDB;
 import com.parksangeun.water.common.task.GetPhotoTask;
@@ -95,6 +96,10 @@ public class MainActivity extends AppCompatActivity
     /** FirebaseDatabase **/
     private FireDB fireDB;
 
+    private CommonFunction function = new CommonFunction(this);
+
+
+    /** Handler **/
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -165,6 +170,7 @@ public class MainActivity extends AppCompatActivity
     private void initView(){
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawerLayout);
 
@@ -268,12 +274,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -324,8 +324,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.navi_my:
-                Intent intent = new Intent(MainActivity.this, MyInfoActivity.class);
-                startActivity(intent);
+                function.ChangeActivity(MainActivity.this, MyInfoActivity.class);
                 drawerLayout.closeDrawers();
                 break;
         }

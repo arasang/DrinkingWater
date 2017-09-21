@@ -9,15 +9,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.john.waveview.WaveView;
 import com.parksangeun.water.R;
 import com.parksangeun.water.common.CommonFunction;
 import com.parksangeun.water.common.ConvertDate;
-import com.parksangeun.water.common.Metrics;
-import com.parksangeun.water.common.UserData;
+import com.parksangeun.water.common.data.Metrics;
+import com.parksangeun.water.common.data.UserData;
 import com.parksangeun.water.common.firebase.FireAuth;
 import com.parksangeun.water.common.firebase.FireDB;
 

@@ -22,12 +22,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.parksangeun.water.R;
 import com.parksangeun.water.common.CommonFunction;
-import com.parksangeun.water.common.Metrics;
-import com.parksangeun.water.common.UserData;
+import com.parksangeun.water.common.data.Metrics;
+import com.parksangeun.water.common.data.UserData;
 import com.parksangeun.water.common.firebase.FireAuth;
 import com.parksangeun.water.common.firebase.FireDB;
 

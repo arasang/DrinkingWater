@@ -20,8 +20,11 @@
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activity.AuthActivity"/>
-        <activity android:name=".activity.MyInfoActivity"/>
+        <activity
+            android:name=".activity.AuthActivity"/>
+        <activity
+            android:name=".activity.MyInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

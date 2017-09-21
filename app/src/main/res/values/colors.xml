@@ -5,5 +5,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="white">#F0F0F0</color>
-
+    <color name="lineColor">#a0a0a0</color>
+    <color name="lineColor2">#b0b0b0</color>
+    <color name="settingBackground">#f0f0f0</color>
 </resources>

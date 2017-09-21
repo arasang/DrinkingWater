@@ -1,4 +1,4 @@
-package com.parksangeun.water.common;
+package com.parksangeun.water.common.data;
 
 import android.net.Uri;
 

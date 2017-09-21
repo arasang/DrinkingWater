@@ -1,4 +1,4 @@
-package com.parksangeun.water.common;
+package com.parksangeun.water.common.data;
 
 /**
  * Created by parksangeun on 2017. 9. 8..
@@ -48,4 +48,10 @@ public class Metrics {
     public static final String BROAD_GET_USER_FAILED   = "GET_USER_FAILED";
     public static final String BROAD_GET_WATER_SUCCESS = "GET_WATER_SUCCESS";
     public static final String BROAD_GET_WATER_FAILED  = "GET_WATER_FAILED";
+
+    /** Used MyInActivity **/
+    public static final String PROFILE_CHANGE_SUCCESS = "CHANGE_SUCCESS";
+    public static final String PROFILE_CHANGE_FAILED  = "CHANGE_FAILED";
+    public static final int CLICK_NAME = 2500;
+    public static final int CLICK_GOAL = 2501;
 }

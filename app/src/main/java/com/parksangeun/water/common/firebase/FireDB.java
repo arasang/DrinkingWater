@@ -2,7 +2,6 @@ package com.parksangeun.water.common.firebase;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,9 +12,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.parksangeun.water.common.Metrics;
-import com.parksangeun.water.common.User;
-import com.parksangeun.water.common.WaterData;
+import com.parksangeun.water.common.data.Metrics;
+import com.parksangeun.water.common.data.User;
+import com.parksangeun.water.common.data.WaterData;
 
 import java.util.HashMap;
 import java.util.Iterator;

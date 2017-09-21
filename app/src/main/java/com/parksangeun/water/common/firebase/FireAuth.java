@@ -8,10 +8,13 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.parksangeun.water.common.Metrics;
-import com.parksangeun.water.common.UserData;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.parksangeun.water.common.data.Metrics;
+import com.parksangeun.water.common.data.UserData;
 
 import java.util.HashMap;
 
@@ -33,6 +36,8 @@ public class FireAuth {
 
     private FirebaseUser user;
 
+    private UserProfileChangeRequest request;
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -51,7 +56,7 @@ public class FireAuth {
                     UserData.setUserEmail(userEmail);
                     UserData.setUserPhoto(userPhoto);
                     UserData.setDailyGoal(userInfo.get("dailyGoal"));
-                    sendBroad(trigger);
+                    sendTriggerToAuth(trigger);
                     break;
             }
         }
@@ -87,19 +92,21 @@ public class FireAuth {
                     trigger = Metrics.USER_NOT_EXIST;
                     if (flag == 0) {
                         flag = 1;
-                        sendBroad(trigger);
+                        sendTriggerToAuth(trigger);
                     }
                 }
             }
         };
     }
 
-    private void sendBroad(int trigger){
+    private void sendTriggerToAuth(int trigger){
         Intent intent = new Intent(Metrics.AUTH_BROAD);
         intent.putExtra("trigger", trigger);
 
         context.sendBroadcast(intent);
     }
+
+
 
     public FirebaseAuth getAuth(){
         return auth;
@@ -119,6 +126,28 @@ public class FireAuth {
         FirebaseUser user = auth.getCurrentUser();
 
         return user;
+    }
+
+    public void changeProfile(String name, Uri uri){
+        request = new UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .setPhotoUri(uri)
+                .build();
+
+        user.updateProfile(request).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful())
+                    sendToMyInfo(Metrics.PROFILE_CHANGE_SUCCESS);
+                else
+                    sendToMyInfo(Metrics.PROFILE_CHANGE_FAILED);
+            }
+        });
+    }
+
+    private void sendToMyInfo(String action) {
+        Intent intent = new Intent(action);
+        context.sendBroadcast(intent);
     }
 
     public void addFireAuth(){

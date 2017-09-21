@@ -1,4 +1,4 @@
-package com.parksangeun.water.common;
+package com.parksangeun.water.common.data;
 
 /**
  * Created by parksangeun on 2017. 9. 18..

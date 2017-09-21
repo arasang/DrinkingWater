@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.parksangeun.water.common.Metrics;
+import com.parksangeun.water.common.data.Metrics;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
