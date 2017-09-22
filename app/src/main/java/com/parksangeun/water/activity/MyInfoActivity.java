@@ -31,12 +31,12 @@ public class MyInfoActivity extends AppCompatActivity implements MyInfoFragment.
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_myinfo);
 
         /** TitleBar 설정 **/
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setContentView(R.layout.activity_myinfo);
 
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
