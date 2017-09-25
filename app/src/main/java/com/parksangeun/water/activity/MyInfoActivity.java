@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.parksangeun.water.R;
 import com.parksangeun.water.common.CommonFunction;
 import com.parksangeun.water.common.data.Metrics;
+import com.parksangeun.water.fragment.GoalFragment;
 import com.parksangeun.water.fragment.MyInfoFragment;
 import com.parksangeun.water.fragment.NameFragment;
 
@@ -37,8 +38,9 @@ public class MyInfoActivity extends AppCompatActivity
                     MyInfoFragment.startCamera{
     private static final String TAG = "MyInfoActivity";
 
-    private NameFragment nameFragment;
     private MyInfoFragment myinfoFragment;
+    private NameFragment nameFragment;
+    private GoalFragment goalFragment;
     private FragmentManager fragmentManager;
     private FragmentTransaction transaction;
     private Toolbar toolbar;
@@ -67,6 +69,7 @@ public class MyInfoActivity extends AppCompatActivity
 
         myinfoFragment = new MyInfoFragment();
         nameFragment = new NameFragment();
+        goalFragment = new GoalFragment();
 
         transaction.add(R.id.container, myinfoFragment);
         transaction.commit();
@@ -107,7 +110,7 @@ public class MyInfoActivity extends AppCompatActivity
 
             case Metrics.CLICK_GOAL:
                 transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.container, nameFragment);
+                transaction.replace(R.id.container, goalFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
