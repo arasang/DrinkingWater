@@ -5,5 +5,5 @@
         android:id="@+id/action_submit"
         android:title="확인"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>

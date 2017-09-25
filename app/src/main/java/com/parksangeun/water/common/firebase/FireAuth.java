@@ -36,16 +36,13 @@ public class FireAuth {
 
     private FirebaseUser user;
 
-    private UserProfileChangeRequest request;
-
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
-                    Log.d(TAG, "이거 호출 되니 ? ");
                     HashMap<String,String> userInfo =
-                            (HashMap<String,String>)msg.getData().getSerializable("UserInfo");
+                    (HashMap<String,String>)msg.getData().getSerializable("UserInfo");
                     String uid = user.getUid();
                     String displayName = user.getDisplayName();
                     String userEmail = user.getEmail();
@@ -73,12 +70,12 @@ public class FireAuth {
         listener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = auth.getCurrentUser();
+                user = auth.getCurrentUser();
 
                 if (user != null) {
                     //TODO: Already exists registered user.
 
-                    Log.d(TAG, "User already exists.");
+//                    Log.d(TAG, "User already exists.");
                     trigger = Metrics.USER_EXIST;
 
                     if (flag == 0) {
@@ -88,7 +85,7 @@ public class FireAuth {
                 } else {
                     //TODO: Need login
 
-                    Log.d(TAG, "You need to log in.");
+//                    Log.d(TAG, "You need to log in.");
                     trigger = Metrics.USER_NOT_EXIST;
                     if (flag == 0) {
                         flag = 1;
@@ -114,7 +111,6 @@ public class FireAuth {
 
     public void setGlobalUser(){
         user = auth.getCurrentUser();
-        Log.d(TAG, "user : " + user.getUid());
         String uid = user.getUid();
 
         FireDB db = new FireDB();
@@ -123,26 +119,37 @@ public class FireAuth {
     }
 
     public FirebaseUser getUser(){
-        FirebaseUser user = auth.getCurrentUser();
+        user = auth.getCurrentUser();
 
         return user;
     }
 
     public void changeProfile(String name, Uri uri){
-        request = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .setPhotoUri(uri)
-                .build();
+        user = auth.getCurrentUser();
 
+        UserProfileChangeRequest request;
+        if (name != null || name.length() != 0) {
+            request = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(name)
+                    .build();
+        } else {
+            request = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(uri)
+                    .build();
+        }
         user.updateProfile(request).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful())
+                if (task.isSuccessful()) {
                     sendToMyInfo(Metrics.PROFILE_CHANGE_SUCCESS);
-                else
+                } else {
                     sendToMyInfo(Metrics.PROFILE_CHANGE_FAILED);
+                }
             }
         });
+
+        UserData.setDisplayName(user.getDisplayName());
+        UserData.setUserPhoto(user.getPhotoUrl());
     }
 
     private void sendToMyInfo(String action) {

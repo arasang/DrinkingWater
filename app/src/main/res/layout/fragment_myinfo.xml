@@ -6,11 +6,31 @@
     android:layout_height="match_parent"
     android:id="@+id/container">
 
-    <ImageView
-        android:layout_width="@dimen/img_profile"
-        android:layout_height="@dimen/img_profile"
-        android:id="@+id/imageProfile"
-        android:layout_gravity="center"/>
+    <RelativeLayout
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:id="@+id/buttonPhoto"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageProfile" />
+
+        <RelativeLayout
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/buttonCamera"
+            android:background="@drawable/back_camera"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true">
+            <ImageView
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_icon_camera"/>
+        </RelativeLayout>
+    </RelativeLayout>
 
     <include
         layout="@layout/content_name"/>

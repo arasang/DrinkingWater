@@ -1,5 +1,7 @@
 package com.parksangeun.water.common.data;
 
+import android.Manifest;
+
 /**
  * Created by parksangeun on 2017. 9. 8..
  **/
@@ -27,9 +29,16 @@ public class Metrics {
     public static final int RC_SIGN_IN = 100;
     public static final String USER = "User";
 
+    public static final int MULTIPLE_PERMISSIONS = 301;
+
+    public static String[] permissions = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA}; //권한 설정 변수
+
     /** Used GetPhotoTask **/
-    public static final int GET_SUCCESS = 1000;
-    public static final int GET_FAILED  = 1001;
+    public static final int GET_IMAGE_SUCCESS = 1000;
+    public static final int GET_IMAGE_FAILED  = 1001;
     public static final String BYTE_ARRAY_PHOTO = "arrayPhoto";
 
     /** Used ConvertDate **/
@@ -54,4 +63,7 @@ public class Metrics {
     public static final String PROFILE_CHANGE_FAILED  = "CHANGE_FAILED";
     public static final int CLICK_NAME = 2500;
     public static final int CLICK_GOAL = 2501;
+    public static final int CAMERA_START = 2502;
+
+
 }

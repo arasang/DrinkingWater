@@ -104,11 +104,11 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what){
-                case Metrics.GET_FAILED:
+                case Metrics.GET_IMAGE_FAILED:
                     Toast.makeText(MainActivity.this, R.string.photo_error, Toast.LENGTH_SHORT).show();
                     break;
 
-                case Metrics.GET_SUCCESS:
+                case Metrics.GET_IMAGE_SUCCESS:
                     Bundle bundle = msg.getData();
 
                     byte[] bytePhoto = bundle.getByteArray(Metrics.BYTE_ARRAY_PHOTO);
@@ -237,7 +237,6 @@ public class MainActivity extends AppCompatActivity
         dailyGoal = UserData.getDailyGoal();
 
         URL photoURL = new URL(url.toString());
-
         new GetPhotoTask(photoURL.toString(), handler).execute();
 
         textName.setText(name);
@@ -350,4 +349,14 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            getUserInfo();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

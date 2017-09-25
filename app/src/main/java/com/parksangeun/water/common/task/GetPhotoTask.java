@@ -70,7 +70,7 @@ public class GetPhotoTask extends AsyncTask {
 
             byte[] arrayPhoto = output.toByteArray();
 
-            msg.what = Metrics.GET_SUCCESS;
+            msg.what = Metrics.GET_IMAGE_SUCCESS;
 
             Bundle bundle = new Bundle();
             bundle.putByteArray(Metrics.BYTE_ARRAY_PHOTO, arrayPhoto);
@@ -79,7 +79,7 @@ public class GetPhotoTask extends AsyncTask {
 
             handler.sendMessage(msg);
         } else {
-            msg.what = Metrics.GET_FAILED;
+            msg.what = Metrics.GET_IMAGE_FAILED;
             handler.sendMessage(msg);
         }
 
