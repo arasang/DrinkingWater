@@ -30,9 +30,9 @@ public class CommonFunction {
         this.context = context;
     }
 
-    public void ChangeActivity(Context current, Class after){
+    public static void ChangeActivity(Context current, Class after){
         Intent intent = new Intent(current, after);
-        context.startActivity(intent);
+        current.startActivity(intent);
     }
 
     public File createImageFile() throws IOException {

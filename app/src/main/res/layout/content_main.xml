@@ -31,42 +31,51 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/linear1"
-            android:orientation="horizontal"
-            android:layout_centerInParent="true">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="목표"
-                android:gravity="center"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textGoal"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/linear2"
             android:orientation="horizontal"
-            android:layout_below="@id/linear1">
-            <TextView
+            android:layout_centerInParent="true">
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="오늘 하루"
-                android:gravity="center"/>
-            <TextView
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="500ml"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    android:id="@+id/textCurrent"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="오늘 하루"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/textCurrent"
-                android:layout_weight="1"/>
-
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textGoal"
+                    android:textColor="@android:color/black"
+                    android:text="2L"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="목표"
+                    android:gravity="center"/>
+            </LinearLayout>
         </LinearLayout>
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,10 +88,11 @@
             android:layout_below="@id/linear2"/>
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonDrink"
+            android:text="추가"
             android:layout_centerInParent="true"
-            android:layout_below="@id/editDrink"/>
+            android:layout_below="@id/linear2"/>
     </RelativeLayout>
 </RelativeLayout>

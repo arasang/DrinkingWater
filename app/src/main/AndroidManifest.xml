@@ -40,6 +40,9 @@
         <activity
             android:name=".activity.MyInfoActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name=".activity.IntakeActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

@@ -4,4 +4,12 @@
     <string name="close_drawer">Close DrawerLayout</string>
     <string name="action_settings">Setting</string>
     <string name="photo_error">"프로필 사진을 가져오지 못했습니다. 관리자에게 문의하세요"</string>
+
+
+    <string name="_150">150ml</string>
+    <string name="_250">250ml</string>
+    <string name="_330">330ml</string>
+    <string name="_500">500ml</string>
+    <string name="_750">750ml</string>
+    <string name="_1">1L</string>
 </resources>

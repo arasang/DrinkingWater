@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/buttonName"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_gravity="center">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textName"
+        android:text="이름"
+        android:textSize="@dimen/my_name_text"/>
+
+    <ImageView
+        android:layout_width="@dimen/my_img_edit"
+        android:layout_height="@dimen/my_img_edit"
+        android:src="@drawable/icon_edit"
+        android:layout_marginLeft="@dimen/my_name_margin_left"/>
+</LinearLayout>

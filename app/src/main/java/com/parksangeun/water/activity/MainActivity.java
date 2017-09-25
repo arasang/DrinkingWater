@@ -244,27 +244,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    // TODO: 현재 시간 가져오기
-    public HashMap<String,String> getTime(){
-
-        ConvertDate convertDate = new ConvertDate();
-        HashMap<String,String> currentDate = new HashMap<String, String>();
-
-        year = convertDate.getCurrent(Metrics.YEAR);
-        month = convertDate.getCurrent(Metrics.MONTH);
-        day = convertDate.getCurrent(Metrics.DAY);
-        time = convertDate.getCurrent(Metrics.TIME);
-        String dayTime = convertDate.getCurrent(Metrics.DAYTIME);
-
-        currentDate.put("year", year);
-        currentDate.put("month", month);
-        currentDate.put("day", day);
-        currentDate.put("time", time);
-        currentDate.put("dayTime", dayTime);
-
-        return currentDate;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -279,30 +258,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
         if (view == buttonDrink) {
-            if (editDrink.length() != 0) {
-                amount = Integer.parseInt(editDrink.getText().toString());
-
-                date = getTime();
-
-                if (amount <= 0) {
-                    Toast.makeText(this, "올바른 값을 입력해주세요", Toast.LENGTH_SHORT).show();
-                    editDrink.setText("");
-
-                } else {
-
-                    MainAlertDialog dialog = new MainAlertDialog(MainActivity.this);
-                    dialog.show();
-
-                    HashMap<String,String> param = new HashMap<String,String>();
-                    param.put(date.get("time"), String.valueOf(amount));
-
-                    fireDB.insertStringDB(Metrics.WATER, uid, date.get("year"),
-                            date.get("month"), date.get("day"), param);
-
-                }
-            } else {
-                Toast.makeText(this, "올바른 값을 입력해주세요", Toast.LENGTH_SHORT).show();
-            }
+            CommonFunction.ChangeActivity(this, IntakeActivity.class);
         }
     }
 
@@ -355,6 +311,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         try {
             getUserInfo();
+//            fireDB.readDayWater(Metrics.WATER, year, month, day, uid);
         } catch (IOException e) {
             e.printStackTrace();
         }
